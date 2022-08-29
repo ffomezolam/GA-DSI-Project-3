@@ -12,13 +12,13 @@ astrology_url = 'https://www.reddit.com/r/astrology/'
 
 class RedditReader:
     """
-    Use class here to support 'with' call so I don't forget to quit the
-    driver
+    A class to browser Reddit. Using a class here to support 'with' call 
+    so I don't forget to quit the driver
     """
     def __init__(self, url = astrology_url):
         self.url = url
         self.driver = None
-        self.sleep_time = 1
+        self.sleep_time = 2
 
     ### AUTO-CONTROL ('with' statement handling)
     def __enter__(self):
@@ -26,7 +26,7 @@ class RedditReader:
         self.open()
         return self
 
-    def __exit__(self):
+    def __exit__(self, e_type, e_val, e_trace):
         " close selenium driver ('with' syntax) "
         self.close()
         return True # ignore exceptions
@@ -43,15 +43,30 @@ class RedditReader:
         self.driver.quit()
         return self
 
+    def get(self):
+        " get url "
+        self.driver.get(self.url)
+        self.sleep()
+        return self
+
     ### DOCUMENT CONTROL
     def scroll_to(self, to = -1):
         " scroll to document position "
         if to < 0: 
             to = self.get_scroll_height()
 
-        script = f'window.scrollTo(0, {to}, behavior="smooth");'
+
+        script = 'window.scrollTo({ left: 0, top: '\
+            + str(to)\
+            + ', behavior: "smooth"});'
+
         self.driver.execute_script(script)
         self.sleep()
+        return self
+
+    def scroll(self):
+        " scroll to bottom (convenience method) "
+        self.scroll_to(-1)
         return self
 
     def get_page_source(self):
@@ -68,7 +83,8 @@ class RedditReader:
         self.sleep_time = t
         return self
 
-    def sleep(self, t = self.sleep_time):
+    def sleep(self, t = None):
         " Sleep for t seconds (wrapper for time.sleep()) "
-        time.sleep(t)
+        if t == None: t = self.sleep_time
+        sleep(t)
         return self
