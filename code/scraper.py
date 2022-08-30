@@ -8,10 +8,15 @@ authentication.
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
+
 from time import sleep
 from datetime import datetime
 
-astrology_url = 'https://www.reddit.com/r/astrology/'
+import json
+
+import pandas as pd
+
+ASTROLOGY_URL = 'https://www.reddit.com/r/astrology/'
 
 class RedditReader:
     """
@@ -21,7 +26,7 @@ class RedditReader:
     URL is passed into constructor, so class will act like a container for
     all data pertaining to one URL.
     """
-    def __init__(self, url = astrology_url):
+    def __init__(self, url = ASTROLOGY_URL):
         self.url = url
         self.driver = None
         self.sleep_time = 2
@@ -102,6 +107,7 @@ class RedditReader:
         return self
 
     def write_page_source(self, prefix='scrape', ext='txt', dir='../scrapes/'):
+        " Write source to file with timestamp "
         src = self.src
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         fn = prefix + '_' + timestamp + '.' + ext
@@ -109,3 +115,41 @@ class RedditReader:
             f.write(src)
 
         return self
+
+class RedditParser:
+    """
+    Class to parse Reddit source html and convert to dataframe and write
+    to csv
+    """
+
+    def __init__(self, src):
+        self.soup = BeautifulSoup(src, 'lxml')
+        self.nposts = 0
+        self.tags = None
+
+        with open('./tags.json', 'r') as tags:
+            self.tags = json.loads(tags.read())
+            print("loaded tags:")
+            print(self.tags)
+
+    def go(self):
+        pass
+
+    def get_posts(self):
+        " get all post containers "
+        post_tag = self.tags['post']['tag']
+        post_attrs = self.tags['post']['attrs']
+
+        return soup.find_all(post_tag, post_attrs)
+
+    def get_post_title(self, p_container):
+        pass
+
+    def get_post_comments(self, p_container):
+        pass
+
+    def get_post_timestamp(self, p_container):
+        pass
+
+    def get_post_body(self, p_container):
+        pass
