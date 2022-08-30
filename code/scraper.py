@@ -7,6 +7,7 @@ NOTES: Need selenium for this if not using API since all post content is loaded 
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from time import sleep
+from datetime import datetime
 
 astrology_url = 'https://www.reddit.com/r/astrology/'
 
@@ -19,6 +20,7 @@ class RedditReader:
         self.url = url
         self.driver = None
         self.sleep_time = 2
+        self.src = ''
 
     ### AUTO-CONTROL ('with' statement handling)
     def __enter__(self):
@@ -69,9 +71,14 @@ class RedditReader:
         self.scroll_to(-1)
         return self
 
+    def cache_page_source(self):
+        " Cache page source text (to use with e.g. write_page_source() "
+        self.src = self.driver.page_source
+        return self
+
     def get_page_source(self):
-        " Get source code "
-        return self.driver.page_source
+        " Get cached source code "
+        return self.src
 
     def get_scroll_height(self):
         " Get page scroll height "
@@ -87,4 +94,13 @@ class RedditReader:
         " Sleep for t seconds (wrapper for time.sleep()) "
         if t == None: t = self.sleep_time
         sleep(t)
+        return self
+
+    def write_page_source(self, prefix='scrape', ext='txt', dir='../scrapes/'):
+        src = self.src
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        fn = prefix + '_' + timestamp + '.' + ext
+        with open(dir + fn, 'w') as f:
+            f.write(src)
+
         return self
