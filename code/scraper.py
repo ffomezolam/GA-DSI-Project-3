@@ -1,8 +1,8 @@
 """
 Utilities for scraping Reddit r/astrology
 
-NOTES: Need selenium for this if not using API since all post content is 
-loaded dynamically as json, which cannot be accessed directly without 
+NOTES: Need selenium for this if not using API since all post content is
+loaded dynamically as json, which cannot be accessed directly without
 authentication.
 """
 
@@ -15,8 +15,11 @@ astrology_url = 'https://www.reddit.com/r/astrology/'
 
 class RedditReader:
     """
-    A class to browser Reddit. Using a class here to support 'with' call
-    so I don't forget to quit the driver
+    A class to scrape Reddit. Using a class here to support 'with' call
+    so I don't forget to quit the driver.
+
+    URL is passed into constructor, so class will act like a container for
+    all data pertaining to one URL.
     """
     def __init__(self, url = astrology_url):
         self.url = url
