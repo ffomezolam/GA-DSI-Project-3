@@ -1,5 +1,5 @@
 """
-Utilities for scraping Reddit r/astrology
+Utilities for scraping Reddit
 
 NOTES: Need selenium for this if not using API since all post content is
 loaded dynamically as json, which cannot be accessed directly without
