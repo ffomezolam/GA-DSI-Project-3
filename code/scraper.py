@@ -1,3 +1,4 @@
+#!python
 """
 Utilities for scraping Reddit
 
@@ -16,6 +17,7 @@ import json
 
 import pandas as pd
 
+# RedditReader default params
 ASTROLOGY_URL = 'https://www.reddit.com/r/astrology/'
 
 class RedditReader:
@@ -41,13 +43,12 @@ class RedditReader:
     def __exit__(self, e_type, e_val, e_trace):
         " close selenium driver ('with' syntax) "
         self.close()
-        return True # ignore exceptions
+        return False # DO NOT IGNORE EXCEPTIONS - NEED THEM TO DEBUG
 
     ### DRIVER MANUAL CONTROL
     def open(self):
         " start selenium driver "
         self.driver = webdriver.Chrome()
-        sleep(self.sleep_time)
         return self
 
     def close(self):
@@ -87,6 +88,7 @@ class RedditReader:
         return self
 
     def get_page_source(self):
+        self.cache_page_source()
         " Get cached source code "
         return self.src
 
@@ -107,6 +109,7 @@ class RedditReader:
         return self
 
     def write_page_source(self, prefix='scrape', ext='txt', dir='../scrapes/'):
+        self.cache_page_source()
         " Write source to file with timestamp "
         src = self.src
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -153,3 +156,71 @@ class RedditParser:
 
     def get_post_body(self, p_container):
         pass
+
+if __name__ == '__main__':
+    import sys
+    import re
+    import time
+
+    # times
+    GET_TIMEOUT_S = 4 # wait time for page load
+    SCROLL_TIMEOUT_S = (60 * 10) # timeout for distance scrolling
+    SCROLL_SLEEP_S = 8 # wait time per scroll
+
+    re_arg = re.compile('^(n|h|t)(\d+)$')
+
+    # type of measurement and amount as string <char><int>
+    #   'n' number of scrolls
+    #   'h' scrollheight
+    #   't' time (seconds)
+    dist = 't10' if len(sys.argv) <= 1 else sys.argv[1].strip()
+
+    re_arg_match = re_arg.match(dist)
+
+    # the argument split into type and amount
+    a_type = re_arg_match.group(1)
+    a_amt = int(re_arg_match.group(2))
+
+    with RedditReader() as rr:
+        print("START", a_type, a_amt)
+
+        rr.set_sleep_time(GET_TIMEOUT_S) # to be safe and allow page to load fully
+        rr.get()
+        print("Page Loaded")
+
+        rr.set_sleep_time(SCROLL_SLEEP_S) # to be safe and allow dynamic load
+
+        if a_type == 'n':
+            # scroll a specified number of times
+            print(f'Scrolling {a_amt} times...')
+            for i in range(a_amt):
+                print('> ' + str(i + 1))
+                rr.scroll()
+        elif a_type == 'h':
+            # scroll until page has reached a max scrollHeight
+            # let's have a timeout as well
+            print(f'Scrolling to pageheight {a_amt}...')
+            elapsed = 0
+            while rr.get_scroll_height() < a_amt:
+                time_start = time.time()
+                rr.scroll()
+                time_end = time.time()
+                elapsed = elapsed + (time_end - time_start)
+                print(f'> {rr.get_scroll_height()}')
+        elif a_type == 't':
+            # scroll until time's up
+            print(f'Scrolling for {a_amt} seconds...')
+            elapsed = 0
+            while elapsed < a_amt:
+                time_start = time.time()
+                rr.scroll()
+                time_end = time.time()
+                elapsed = elapsed + (time_end - time_start)
+                print(f'> {elapsed}')
+        else:
+            print("No Args - Exiting")
+
+        print('Writing to file...')
+        rr.write_page_source()
+        print('DONE')
+
