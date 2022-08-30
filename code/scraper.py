@@ -1,7 +1,9 @@
 """
 Utilities for scraping Reddit r/astrology
 
-NOTES: Need selenium for this if not using API since all post content is loaded dynamically as json, which cannot be accessed directly without authentication.
+NOTES: Need selenium for this if not using API since all post content is 
+loaded dynamically as json, which cannot be accessed directly without 
+authentication.
 """
 
 from bs4 import BeautifulSoup
@@ -13,7 +15,7 @@ astrology_url = 'https://www.reddit.com/r/astrology/'
 
 class RedditReader:
     """
-    A class to browser Reddit. Using a class here to support 'with' call 
+    A class to browser Reddit. Using a class here to support 'with' call
     so I don't forget to quit the driver
     """
     def __init__(self, url = astrology_url):
@@ -54,7 +56,7 @@ class RedditReader:
     ### DOCUMENT CONTROL
     def scroll_to(self, to = -1):
         " scroll to document position "
-        if to < 0: 
+        if to < 0:
             to = self.get_scroll_height()
 
 
