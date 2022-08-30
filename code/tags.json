@@ -1,0 +1,60 @@
+{
+    "post": {
+        "tag": "div",
+        "attrs": {
+            "data-testid": "post-container"
+        }
+    },
+
+    "title": {
+        "ancestor": "post",
+        "tag": "div",
+        "attrs": {
+            "data-adclicklocation": "title"
+        }
+    },
+
+    "time": {
+        "ancestor": "post",
+        "tag": "span",
+        "attrs": {
+            "data-testid": "post_timestamp",
+            "data-click-id": "timestamp"
+        }
+    },
+
+    "comment-container": {
+        "ancestor": "post",
+        "tag": "a",
+        "attrs": {
+            "data-adclicklocation": "comments",
+            "data-click-id": "comments",
+            "data-test-id": "comments-page-link-num-comments"
+        }
+    },
+
+    "comments": {
+        "ancestor": "comment-container",
+        "tag": "span",
+        "attrs": {
+            "class": "FHCV02u6Cp2zYL0fhQPsO"
+        }
+    },
+
+    "body": {
+        "ancestor": "post",
+        "tag": "a",
+        "attrs": {
+            "data-click-id": "body"
+        }
+    },
+
+    "body-text": {
+        "ancestor": "body",
+        "tag": "div",
+        "attrs": {
+            "data-click-id": "text",
+            "class": "Chtkt3BCZQruf0LtmFg2c"
+        }
+    }
+}
