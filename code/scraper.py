@@ -22,9 +22,12 @@ ASTROLOGY_URL = 'https://www.reddit.com/r/astrology/'
 
 # By default I think the above goes to "hot" posts
 # Try also URLs for
-#   Newest posts
-#   Top Posts
-# This reddit has been around since 2008, and one third-party search showed 60k+ posts
+#   r/astrology/new (sorted by newest posts)
+#   r/astrology/top/?t=all (top posts all time)
+# Reddit API only allows 1000 max results per query. As far as I can tell 
+# there is no way to search by date to iterate over time periods. Third party
+# resources are not giving me the most usable data.
+#
 
 class RedditReader:
     """
@@ -163,7 +166,7 @@ class RedditParser:
         while len(attrs) > 1: attrs.popitem()
 
         if not container: return self.soup.find_all(tag, attrs)
-        else: 
+        else:
             html = container.find(tag, attrs)
             if not html: return ''
             else: return html.text
@@ -193,6 +196,7 @@ if __name__ == '__main__':
     #   'h' scrollheight
     #   't' time (seconds)
     dist = 't10' if len(sys.argv) <= 1 else sys.argv[1].strip()
+    url = ASTROLOGY_URL if len(sys.argv) <= 2 else sys.argv[2].strip()
 
     re_arg_match = re_arg.match(dist)
 
@@ -200,7 +204,9 @@ if __name__ == '__main__':
     a_type = re_arg_match.group(1)
     a_amt = int(re_arg_match.group(2))
 
-    with RedditReader() as rr:
+
+
+    with RedditReader(url) as rr:
         print("START", a_type, a_amt)
 
         rr.set_sleep_time(GET_TIMEOUT_S) # to be safe and allow page to load fully
