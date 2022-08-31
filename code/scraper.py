@@ -24,7 +24,7 @@ ASTROLOGY_URL = 'https://www.reddit.com/r/astrology/'
 # Try also URLs for
 #   r/astrology/new (sorted by newest posts)
 #   r/astrology/top/?t=all (top posts all time)
-# Reddit API only allows 1000 max results per query. As far as I can tell 
+# Reddit API only allows 1000 max results per query. As far as I can tell
 # there is no way to search by date to iterate over time periods. Third party
 # resources are not giving me the most usable data.
 #
@@ -127,56 +127,6 @@ class RedditReader:
             f.write(src)
 
         return self
-
-class RedditParser:
-    """
-    Class to parse Reddit source html and convert to dataframe and write
-    to csv
-    """
-
-    def __init__(self, src=None):
-        self.soup = None
-        self.nposts = 0
-        self.tags = None
-
-        with open('./tags.json', 'r') as tags:
-            self.tags = json.loads(tags.read())
-            print("loaded tags:")
-            print(self.tags)
-
-        if src: self.load(src)
-
-    def load(self, src):
-        self.soup = BeautifulSoup(src, 'lxml')
-        return self
-
-    def go(self):
-        posts = self.get_content('post')
-        types = ['title','time','comments','body-text']
-        out = dict()
-        for type in types:
-            out[type] = [self.get_content(type, post) for post in posts]
-
-        return out
-
-    def get_content(self, type='post', container=None):
-        " get content from html, optionally from inner container "
-        tag = self.tags[type]['tag']
-        attrs = self.tags[type]['attrs']
-        while len(attrs) > 1: attrs.popitem()
-
-        if not container: return self.soup.find_all(tag, attrs)
-        else:
-            html = container.find(tag, attrs)
-            if not html: return ''
-            else: return html.text
-
-    def process(self, type, text):
-        # TODO: do whatever trimming based on content type
-        if type == 'comments':
-            pass
-        if type == 'time':
-            pass
 
 # SELF-EXECUTE SCRAPER
 if __name__ == '__main__':
