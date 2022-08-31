@@ -20,6 +20,12 @@ import pandas as pd
 # RedditReader default params
 ASTROLOGY_URL = 'https://www.reddit.com/r/astrology/'
 
+# Other URLs to use:
+# Top posts of all time
+# https://www.reddit.com/r/astrology/top/?t=all
+# New posts
+# https://www.reddit.com/r/astrology/new/
+
 class RedditReader:
     """
     A class to scrape Reddit. Using a class here to support 'with' call
@@ -125,8 +131,8 @@ class RedditParser:
     to csv
     """
 
-    def __init__(self, src):
-        self.soup = BeautifulSoup(src, 'lxml')
+    def __init__(self, src=None):
+        self.soup = None
         self.nposts = 0
         self.tags = None
 
@@ -135,28 +141,35 @@ class RedditParser:
             print("loaded tags:")
             print(self.tags)
 
+        if src: self.load(src)
+
+    def load(self, src):
+        self.soup = BeautifulSoup(src, 'lxml')
+        return self
+
     def go(self):
-        pass
+        posts = self.get_content('post')
+        types = ['title','time','comments','body-text']
+        out = dict()
+        for type in types:
+            out[type] = [self.get_content(type, post) for post in posts]
 
-    def get_posts(self):
-        " get all post containers "
-        post_tag = self.tags['post']['tag']
-        post_attrs = self.tags['post']['attrs']
+        return out
 
-        return soup.find_all(post_tag, post_attrs)
+    def get_content(self, type='post', container=None):
+        " get content from html, optionally from inner container "
+        tag = self.tags[type]['tag']
+        attrs = self.tags[type]['attrs']
+        while len(attrs) > 1: attrs.popitem()
 
-    def get_post_title(self, p_container):
-        pass
+        if not container: return self.soup.find_all(tag, attrs)
+        else:
+            html = container.find(tag, attrs)
+            if not html: return ''
+            else: return html.text
 
-    def get_post_comments(self, p_container):
-        pass
 
-    def get_post_timestamp(self, p_container):
-        pass
-
-    def get_post_body(self, p_container):
-        pass
-
+# SELF-EXECUTE SCRAPER
 if __name__ == '__main__':
     import sys
     import re
@@ -174,6 +187,7 @@ if __name__ == '__main__':
     #   'h' scrollheight
     #   't' time (seconds)
     dist = 't10' if len(sys.argv) <= 1 else sys.argv[1].strip()
+    url = ASTROLOGY_URL if len(sys.argv) <= 2 else sys.argv[2].strip()
 
     re_arg_match = re_arg.match(dist)
 
@@ -181,7 +195,7 @@ if __name__ == '__main__':
     a_type = re_arg_match.group(1)
     a_amt = int(re_arg_match.group(2))
 
-    with RedditReader() as rr:
+    with RedditReader(url) as rr:
         print("START", a_type, a_amt)
 
         rr.set_sleep_time(GET_TIMEOUT_S) # to be safe and allow page to load fully
