@@ -7,15 +7,12 @@ loaded dynamically as json, which cannot be accessed directly without
 authentication.
 """
 
-from bs4 import BeautifulSoup
 from selenium import webdriver
 
 from time import sleep
 from datetime import datetime
 
 import json
-
-import pandas as pd
 
 # RedditReader default params
 ASTROLOGY_URL = 'https://www.reddit.com/r/astrology/'
