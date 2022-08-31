@@ -6,11 +6,19 @@
         }
     },
 
-    "title": {
+    "title-container": {
         "ancestor": "post",
         "tag": "div",
         "attrs": {
             "data-adclicklocation": "title"
+        }
+    },
+
+    "title": {
+        "ancestor": "title-container",
+        "tag": "h3",
+        "attrs": {
+            "class": "_eYtD2XCVieq6emjKBH3m"
         }
     },
 

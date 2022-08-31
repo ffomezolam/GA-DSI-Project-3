@@ -14,6 +14,7 @@ import pandas as pd
 
 import random
 
+### REDDITPARSER CLASS
 class RedditParser:
     """
     Class to parse Reddit source html and convert to dataframe and write
@@ -81,6 +82,7 @@ class RedditParser:
 
         return text
 
+### UTILITY FUNCTIONS
 def time_to_seconds(amt, unit):
     " Utility function to convert a stated amount of time into absolute seconds "
     if unit == 'day':
