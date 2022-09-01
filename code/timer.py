@@ -41,7 +41,8 @@ class Timer:
 
     def elapsed(self):
         " Get time elapsed from start "
-        return time.time() - self._start
+        if self._running: self._elapsed = time.time() - self._start
+        return self._elapsed
 
     def set_timeout(self, s = -1):
         " Set a timeout for the timer "
