@@ -17,7 +17,7 @@ class RedditParser:
     to csv
     """
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, tags_file = 'tags.json'):
         with open(file_path, 'r') as f:
             src = f.read()
 
@@ -26,8 +26,11 @@ class RedditParser:
         self.nposts = 0
         self.tags = None
 
+        # make sure tags file name is properly formatted
+        if not tags_file.endswith('.json'): tags_file += '.json'
+
         # load relevant tag info
-        with open('./tags.json', 'r') as tags:
+        with open(tags_file, 'r') as tags:
             self.tags = json.loads(tags.read())
 
         if src: self.load(src)
@@ -50,7 +53,7 @@ class RedditParser:
 
         # put all content into results dictionary
         for type in types:
-            self.result_[type] = [self.get_content(type, post) 
+            self.result_[type] = [self.get_content(type, post)
                                   for post in posts]
 
         self.result_len_ = len(self.result_[types[0]])
@@ -172,7 +175,7 @@ if __name__ == '__main__':
 
     print("\n\n***--- COUNTING WORDS (title + body) ---***\n")
     # get word counts
-    alltext = [result['title'][i] + ' ' + result['body-text'][i] 
+    alltext = [result['title'][i] + ' ' + result['body-text'][i]
                for i in range(len(result['title']))]
     cv = CountVectorizer(stop_words = stopwords.words('english'))
     words = cv.fit_transform(alltext)
