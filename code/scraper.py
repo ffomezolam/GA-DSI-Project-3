@@ -40,6 +40,8 @@ class RedditReader:
         self.sleep_time = 2
         self.src = ''
 
+        self.write_prefix = 'scrape'
+
     ### AUTO-CONTROL ('with' statement handling)
     def __enter__(self):
         " start selenium driver ('with' syntax)"
@@ -71,9 +73,7 @@ class RedditReader:
     ### DOCUMENT CONTROL
     def scroll_to(self, to = -1):
         " scroll to document position "
-        if to < 0:
-            to = self.get_scroll_height()
-
+        if to < 0: to = self.get_scroll_height()
 
         script = 'window.scrollTo({ left: 0, top: '\
             + str(to)\
@@ -114,6 +114,10 @@ class RedditReader:
         sleep(t)
         return self
 
+    def set_write_prefix(self, prefix):
+        self.write_prefix = prefix
+        return self
+
     def write_page_source(self, prefix='scrape', ext='txt', dir='../scrapes/'):
         self.cache_page_source()
         " Write source to file with timestamp "
@@ -130,12 +134,14 @@ if __name__ == '__main__':
     import sys
     import re
     import time
+    from timer import Timer
 
-    # times
+    # sleep times and timeouts (in seconds)
     GET_TIMEOUT_S = 4 # wait time for page load
-    SCROLL_TIMEOUT_S = (60 * 10) # timeout for distance scrolling
+    SCROLL_TIMEOUT_S = 60 # timeout for scrolling
     SCROLL_SLEEP_S = 8 # wait time per scroll
 
+    # regex for command line arg 1
     re_arg = re.compile('^(n|h|t)(\d+)$')
 
     # type of measurement and amount as string <char><int>
@@ -145,54 +151,79 @@ if __name__ == '__main__':
     dist = 't10' if len(sys.argv) <= 1 else sys.argv[1].strip()
     url = ASTROLOGY_URL if len(sys.argv) <= 2 else sys.argv[2].strip()
 
+    # the first cl argument split into type and amount
     re_arg_match = re_arg.match(dist)
-
-    # the argument split into type and amount
     a_type = re_arg_match.group(1)
     a_amt = int(re_arg_match.group(2))
 
-
-
+    # start the parser
     with RedditReader(url) as rr:
         print("START", a_type, a_amt)
 
-        rr.set_sleep_time(GET_TIMEOUT_S) # to be safe and allow page to load fully
+        # set longer sleep time to allow page to load fully
+        rr.set_sleep_time(GET_TIMEOUT_S)
+
+        # get url
         rr.get()
         print("Page Loaded")
 
-        rr.set_sleep_time(SCROLL_SLEEP_S) # to be safe and allow dynamic load
+        # set sleep time to allow for dynamic loads
+        rr.set_sleep_time(SCROLL_SLEEP_S)
 
+        # cl argument 1
         if a_type == 'n':
             # scroll a specified number of times
             print(f'Scrolling {a_amt} times...')
             for i in range(a_amt):
                 print('> ' + str(i + 1))
                 rr.scroll()
+
         elif a_type == 'h':
             # scroll until page has reached a max scrollHeight
-            # let's have a timeout as well
             print(f'Scrolling to pageheight {a_amt}...')
-            elapsed = 0
             while rr.get_scroll_height() < a_amt:
-                time_start = time.time()
                 rr.scroll()
-                time_end = time.time()
-                elapsed = elapsed + (time_end - time_start)
                 print(f'> {rr.get_scroll_height()}')
+
         elif a_type == 't':
             # scroll until time's up
+            # set a timeout on scrollheight - if we're stuck at the same
+            # height for a long time then we can quit assuming we are at
+            # bottom of page
             print(f'Scrolling for {a_amt} seconds...')
-            elapsed = 0
-            while elapsed < a_amt:
-                time_start = time.time()
+
+            # setup timers
+            timer = Timer()
+            scroll_timer = Timer()
+            scroll_height = rr.get_scroll_height()
+
+            # loop until we've exceeded set time (seconds)
+            while timer.elapsed() < a_amt:
+                # start main and scrolling timer
+                timer.start()
+                scroll_timer.start()
+
+                # scroll the page
                 rr.scroll()
-                time_end = time.time()
-                elapsed = elapsed + (time_end - time_start)
+
+                if rr.get_scroll_height() > scroll_height:
+                    # if our new scroll_height is more than previous, we have
+                    # scrolled, so reset scroll timer
+                    scroll_timer.restart()
+                    scroll_height = rr.get_scroll_height()
+                elif scroll_timer.elapsed() > SCROLL_TIMEOUT_S:
+                    # otherwise we are at the same height so increase the scroll
+                    # timer until we reach a threshold
+                    print(f'> * Scroll stuck for {scroll_timer.elapsed()}s - finishing...')
+                    break
+
                 print(f'> {elapsed}')
+
         else:
+            # exit if we don't have a first argument
             print("No Args - Exiting")
 
+        # write to disk and close parser
         print('Writing to file...')
         rr.write_page_source()
         print('DONE')
-
