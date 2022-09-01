@@ -7,6 +7,7 @@ from scraper import RedditReader
 import csv
 import itertools
 from timer import Timer
+import time
 
 # Get useful words
 with open('../data/misc/useful_words_20220831145800.csv', 'r', newline='') as f:
@@ -36,39 +37,50 @@ def make_url(base, params):
 def make_query(key, value):
     return str(key) + '=' + str(value)
 
+def scrape(url, attr_prefix):
+    with RedditReader(url) as rr:
+        rr.set_sleep_time(8)
+        rr.get()
+
+        timer = Timer()
+        height_timer = Timer()
+        height = rr.get_scroll_height()
+
+        while timer.elapsed() < 1000:
+            timer.start()
+            height_timer.start()
+
+            rr.scroll()
+
+            if height < rr.get_scroll_height():
+                height = rr.get_scroll_height()
+                height_timer.restart()
+            elif height_timer.elapsed() > 60:
+                print("> height timeout")
+                break
+
+            print(f'> {timer.elapsed()}, height {height}')
+
+
+        print("DONE")
+        prefix = 'scrape_' + attr_prefix
+        rr.write_page_source(prefix=prefix)
+
 # test
 
-q = make_query('q', SEARCH_ATTRS['q'][0]) + '&'\
-    + make_query('sort', SEARCH_ATTRS['sort'][0]) + '&'\
-    + make_query('t', 'all')
+# run a scrape on a search for each work using various sort methods
+# hack the loop - too lazy to figure out a cool way to do it
+for word in SEARCH_ATTRS['q'][:3]:
+    q = make_query('q', word)
 
-url = URL_BASE + '?' + q
+    for sort in SEARCH_ATTRS['sort']:
+        s = make_query('s', sort)
+        t = make_query('t', 'all')
 
-with RedditReader(url) as rr:
+        qs = '&'.join([q,s,t])
 
-    rr.set_sleep_time(8)
-    rr.get()
+        url = URL_BASE + '&' + qs
+        prefix = word + sort
 
-    timer = Timer()
-    height_timer = Timer()
-    height = rr.get_scroll_height()
-
-    while timer.elapsed() < 1000:
-        timer.start()
-        height_timer.start()
-
-        rr.scroll()
-
-        if height < rr.get_scroll_height():
-            height = rr.get_scroll_height()
-            height_timer.restart()
-        elif height_timer.elapsed() > 60:
-            print("> height timeout")
-            break;
-
-        print(f'> {timer.elapsed()}, height {height}')
-
-
-    print("DONE")
-    prefix = 'scrape' + SEARCH_ATTRS['q'][0]
-    rr.write_page_source(prefix=prefix)
+        scrape(url, prefix)
+        time.sleep(10)

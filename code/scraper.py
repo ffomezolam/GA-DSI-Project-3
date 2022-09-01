@@ -206,7 +206,7 @@ if __name__ == '__main__':
                 # scroll the page
                 rr.scroll()
 
-                if rr.get_scroll_height() > scroll_height:
+                if scroll_height < rr.get_scroll_height():
                     # if our new scroll_height is more than previous, we have
                     # scrolled, so reset scroll timer
                     scroll_timer.restart()
