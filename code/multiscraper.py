@@ -20,8 +20,8 @@ SEARCH_ATTRS = {
     'q': words,
     'sort': [
         'top',
-        #'relevance',
-        'comments',
+        'relevance',
+        #'comments',
         'new',
         #'hot'
     ],
@@ -29,6 +29,9 @@ SEARCH_ATTRS = {
         'all'
     ]
 }
+
+WORD_START = 0
+N_WORDS = 10
 
 def make_url(base, params):
     """ utility to build url from query params """
@@ -73,7 +76,7 @@ def scrape(url, attr_prefix):
 
 # run a scrape on a search for each work using various sort methods
 # hack the loop - too lazy to figure out a cool way to do it
-for word in SEARCH_ATTRS['q'][:3]:
+for word in SEARCH_ATTRS['q'][WORD_START:WORD_START + N_WORDS]:
     q = make_query('q', word)
 
     for sort in SEARCH_ATTRS['sort']:
