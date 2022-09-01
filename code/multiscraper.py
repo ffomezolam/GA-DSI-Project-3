@@ -39,12 +39,15 @@ def make_query(key, value):
 
 def scrape(url, attr_prefix):
     with RedditReader(url) as rr:
+        print("> Starting scraper")
         rr.set_sleep_time(8)
         rr.get()
 
         timer = Timer()
         height_timer = Timer()
         height = rr.get_scroll_height()
+
+        print("> got URL; scrolling...")
 
         while timer.elapsed() < 1000:
             timer.start()
@@ -82,5 +85,6 @@ for word in SEARCH_ATTRS['q'][:3]:
         url = URL_BASE + '&' + qs
         prefix = word + sort
 
+        print(f'scraping {url}')
         scrape(url, prefix)
         time.sleep(10)
