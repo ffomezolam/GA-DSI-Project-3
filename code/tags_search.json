@@ -1,0 +1,37 @@
+{
+    "post": {
+        "tag": "div",
+        "attrs": {
+            "data-click-id": "body"
+        }
+    },
+    "title": {
+        "ancestor": "post",
+        "tag": "div",
+        "attrs": {
+            "data-adclicklocation": "title"
+        }
+    },
+    "post-link": {
+        "ancestor": "title",
+        "tag": "a",
+        "attrs": {
+            "data-click-id": "body"
+        }
+    },
+    "comments": {
+        "ancestor": "post",
+        "tag": "div",
+        "attrs": {
+            "class": "_2IpBiHtzKzIxk2fKI4UOv1 _2n04GrCyhhQf-Kshn7akmH HNL__wz5plDpzJe5Lnn"
+        }
+    },
+    "time": {
+        "ancestor": "post",
+        "tag": "span",
+        "attrs": {
+            "data-test-id": "post_timestamp",
+            "data-click-id": "timestamp"
+        }
+    }
+}
