@@ -82,7 +82,7 @@ for word in SEARCH_ATTRS['q'][:3]:
 
         qs = '&'.join([q,s,t])
 
-        url = URL_BASE + '&' + qs
+        url = URL_BASE + '?' + qs
         prefix = word + sort
 
         print(f'scraping {url}')
