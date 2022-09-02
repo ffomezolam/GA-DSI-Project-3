@@ -5,6 +5,9 @@ Utilities for scraping Reddit
 NOTES: Need selenium for this if not using API since all post content is
 loaded dynamically as json, which cannot be accessed directly without
 authentication.
+
+DISCLAIMER: THIS IS NOT PRODUCTION-READY CODE. DO NOT USE UNLESS YOUR NAME IS
+ANDREW MALOZEMOFF AND/OR YOU AGREE TO ASSUME ANY AND ALL RISK!
 """
 
 from selenium import webdriver

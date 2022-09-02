@@ -1,6 +1,9 @@
 #!python
 """
 Utilities for parsing Reddit html
+
+DISCLAIMER: THIS IS NOT PRODUCTION-READY CODE. DO NOT USE UNLESS YOUR NAME IS
+ANDREW MALOZEMOFF AND/OR YOU AGREE TO ASSUME ANY AND ALL RISK!
 """
 
 from bs4 import BeautifulSoup
