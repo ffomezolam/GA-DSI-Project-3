@@ -46,7 +46,7 @@ class RedditParser:
         " Run the parser and capture all data into a dictionary "
 
         posts = self.get_content('post')
-        types = ['title','time','comments','body-text']
+        types = ['title','time','comments','body-text', 'media']
 
         # initialize result dictionary
         self.result_ = dict()
@@ -87,9 +87,22 @@ class RedditParser:
         # Process all relevant tags
         if not container: return self.soup.find_all(tag, attrs)
         else:
+            # get html in container
             html = container.find(tag, attrs)
-            if not html: return ''
-            else: return self.process(type, html.text)
+
+            if not html:
+                # return if no result
+                return ''
+            else:
+                if type == 'media':
+                    # special case for media element - a little hacky because
+                    # tacked on after everything else was already done.
+                    # need to check to make sure we actually have media, then
+                    # return a boolean
+                    return "True"
+                else:
+                    # process text
+                    return self.process(type, html.text)
 
     def process(self, type, text):
         " Process obtained string depending on data type "
