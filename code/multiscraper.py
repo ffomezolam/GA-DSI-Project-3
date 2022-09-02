@@ -30,17 +30,15 @@ SEARCH_ATTRS = {
     ]
 }
 
-WORD_START = 0
+WORD_START = 20
 N_WORDS = 10
 
-def make_url(base, params):
-    """ utility to build url from query params """
-    pass
-
 def make_query(key, value):
+    ''' Make query key-value pair '''
     return str(key) + '=' + str(value)
 
 def scrape(url, attr_prefix):
+    ''' Scrape a url and write source to disk '''
     with RedditReader(url) as rr:
         print("> Starting scraper")
         rr.set_sleep_time(8)
@@ -70,7 +68,7 @@ def scrape(url, attr_prefix):
 
         print("DONE")
         prefix = 'scrape_' + attr_prefix
-        rr.write_page_source(prefix=prefix)
+        rr.write_page_source(prefix=prefix, dir='../scrapes/search/')
 
 # test
 
