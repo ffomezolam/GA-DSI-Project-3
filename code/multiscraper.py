@@ -30,7 +30,7 @@ SEARCH_ATTRS = {
     ]
 }
 
-WORD_START = 20
+WORD_START = 30
 N_WORDS = 10
 
 def make_query(key, value):
