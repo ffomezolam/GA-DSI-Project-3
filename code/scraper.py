@@ -73,6 +73,10 @@ class RedditReader:
         self.sleep()
         return self
 
+    def url(self, url):
+        self.url = url
+        return self
+
     ### DOCUMENT CONTROL
     def scroll_to(self, to = -1):
         " scroll to document position "
