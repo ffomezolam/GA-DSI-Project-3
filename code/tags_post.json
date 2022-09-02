@@ -34,5 +34,12 @@
         "attrs": {
             "data-click-id": "text"
         }
+    },
+    "media": {
+        "ancestor": "body",
+        "tag": "div",
+        "attrs": {
+            "data-click-id": "media"
+        }
     }
 }

@@ -64,5 +64,29 @@
             "data-click-id": "text",
             "class": "Chtkt3BCZQruf0LtmFg2c"
         }
+    },
+
+    "media": {
+        "ancestor": "body",
+        "tag": "div",
+        "attrs": {
+            "data-click-id": "media"
+        }
+    },
+
+    "video": {
+        "ancestor": "media",
+        "tag": ["iframe", "video"],
+        "attrs": {
+            "class": "media-element"
+        }
+    },
+
+    "image": {
+        "ancestor": "media",
+        "tag": "img",
+        "attrs": {
+            "alt": "Post image"
+        }
     }
 }
