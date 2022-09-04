@@ -1,6 +1,9 @@
 #!python
 """
 Utility script to perform a bunch of scrapes in one go
+
+DISCLAIMER: THIS IS NOT PRODUCTION-READY CODE. DO NOT USE UNLESS YOUR NAME IS
+ANDREW MALOZEMOFF AND/OR YOU AGREE TO ASSUME ANY AND ALL RISK!
 """
 
 from scraper import RedditReader
@@ -30,7 +33,7 @@ SEARCH_ATTRS = {
     ]
 }
 
-WORD_START = 30
+WORD_START = 60
 N_WORDS = 10
 
 def make_query(key, value):
@@ -74,7 +77,7 @@ def scrape(url, attr_prefix):
 
 # run a scrape on a search for each work using various sort methods
 # hack the loop - too lazy to figure out a cool way to do it
-for word in SEARCH_ATTRS['q'][WORD_START:WORD_START + N_WORDS]:
+for word in words[WORD_START:WORD_START + N_WORDS]:
     q = make_query('q', word)
 
     for sort in SEARCH_ATTRS['sort']:
