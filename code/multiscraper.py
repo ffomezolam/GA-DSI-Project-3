@@ -33,8 +33,8 @@ SEARCH_ATTRS = {
     ]
 }
 
-WORD_START = 60
-N_WORDS = 10
+WORD_START = 84
+N_WORDS = 15
 
 def make_query(key, value):
     ''' Make query key-value pair '''

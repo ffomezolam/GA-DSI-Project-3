@@ -39,8 +39,9 @@ print()
 # STEP 2: OPEN SELENIUM AND GET SOURCE FOR EACH POST
 rr = RedditReader()
 
-for url in urls[:3]:
+for url in list(urls)[:3]:
+    print("> " + url)
     rr.url(url)
     rr.get()
     rr.write_page_source(prefix='scrape_page', dir='../scrapes/page/')
-    rr.sleep(8)
+    rr.sleep(5)
