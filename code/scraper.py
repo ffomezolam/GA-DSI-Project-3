@@ -73,7 +73,7 @@ class RedditReader:
         self.sleep()
         return self
 
-    def url(self, url):
+    def set_url(self, url):
         self.url = url
         return self
 
@@ -224,7 +224,7 @@ if __name__ == '__main__':
                     print(f'> * Scroll stuck for {scroll_timer.elapsed()}s - finishing...')
                     break
 
-                print(f'> {elapsed}')
+                print(f'+ {timer.elapsed()}')
 
         else:
             # exit if we don't have a first argument
