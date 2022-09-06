@@ -30,7 +30,7 @@
         "ancestor": "post",
         "tag": "a",
         "attrs": {
-            "class": "bylink comments"
+            "data-event-action": "comments"
         }
     },
     "body-text": {

@@ -115,11 +115,11 @@ class RedditParser:
 
         # handle any special cases
         if type == 'comments':
-            print("TEXT IS " + text)
             text = text.split(' ')[0]
             if text.endswith('k'):
                 text = float(text[:-1]) * 1000
-
+            elif text == 'comment': # blank comment area - no comments
+                text = 0
             text = int(text)
 
         if type == 'time':
