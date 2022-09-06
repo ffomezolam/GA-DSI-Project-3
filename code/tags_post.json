@@ -1,44 +1,50 @@
 {
-    "body": {
+    "post": {
         "tag": "div",
         "attrs": {
-            "data-test-id": "post-content"
+            "id": "siteTable"
         }
     },
     "title": {
-        "ancestor": "body",
+        "ancestor": "post",
+        "tag": "a",
+        "attrs": {
+            "class": "title"
+        }
+    },
+    "topmatter": {
+        "ancestor": "post",
         "tag": "div",
         "attrs": {
-            "data-adclicklocation": "title"
+            "class": "top-matter"
         }
     },
     "time": {
-        "ancestor": "body",
-        "tag": "span",
+        "ancestor": "topmatter",
+        "tag": "time",
         "attrs": {
-            "data-testid": "post_timestamp",
-            "data-click-id": "timestamp"
+            "class": ""
         }
     },
     "comments": {
-        "ancestor": "body",
+        "ancestor": "post",
         "tag": "a",
         "attrs": {
-            "data-click-id": "comments",
-            "data-adclicklocation": "comments"
+            "class": "bylink comments"
         }
     },
     "body-text": {
-        "ancestor": "body",
+        "ancestor": "post",
         "tag": "div",
         "attrs": {
-            "data-click-id": "text"
+            "class": "expando"
         }
     },
     "media": {
-        "ancestor": "body",
+        "ancestor": "post",
         "tag": "div",
         "attrs": {
+            "class": "media",
             "data-click-id": "media"
         }
     }
