@@ -4,7 +4,7 @@ Utilities and variables for project notebooks
 
 # IMPORTS
 import pandas as pd
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix, classification_report, f1_score
 import calendar
 
 # VARIABLES
@@ -75,3 +75,41 @@ def df_from_cv(cv, cv_sparse, index):
 def easy_concat(df1, df2):
     """ Quick concat df on columns """
     return pd.concat([df1, df2], axis=1)
+
+def wc_metrics(cvdf, y_true, y_pred, opts=[]):
+    """ Metrics for word counts """
+    correct_preds_filt = (y_pred == y_true)
+    tp_filt = (y_true == 1) & (y_pred == 1)
+    tn_filt = (y_true == 0) & (y_pred == 0)
+    fp_filt = (y_true == 0) & (y_pred == 1)
+    fn_filt = (y_true == 1) & (y_pred == 0)
+
+    wcdf = pd.DataFrame()
+    wcdf['total'] = cvdf.sum()
+    wcdf['pct'] = wcdf['total'] / wcdf['total'].sum()
+
+    wcdf['correct'] = cvdf[correct_preds_filt].sum()
+    wcdf['incorrect'] = cvdf[~correct_preds_filt].sum()
+    wcdf['diff'] = (wcdf['correct'] - wcdf['incorrect'])
+
+    wcdf['tp'] = cvdf[tp_filt].sum()
+    wcdf['tn'] = cvdf[tn_filt].sum()
+    wcdf['fp'] = cvdf[fp_filt].sum()
+    wcdf['fn'] = cvdf[fn_filt].sum()
+
+    wcdf['accuracy'] = wcdf['correct'] / wcdf['total'] # prop of correct to total
+    wcdf['recall'] = wcdf['tp'] / (wcdf['tp'] + wcdf['fn']) # tp / all p
+    wcdf['specificity'] = wcdf['tn'] / (wcdf['tn'] + wcdf['fp']) # tn / all n
+    wcdf['precision'] = wcdf['tp'] / (wcdf['tp'] + wcdf['fp']) # tp / pred p
+
+    wcdf['f1'] = 2 * ((wcdf['precision'] * wcdf['recall']) / (wcdf['precision'] + wcdf['recall']))
+
+    if 'no-overall' in opts:
+        wcdf.drop(columns=['correct','incorrect','diff'], inplace=True)
+    if 'no-cm' in opts:
+        wcdf.drop(columns=['tp','tn','fp','fn'], inplace=True)
+    if 'no-metrics' in opts:
+        wcdf.drop(columns=['accuracy','recall','specificity','precision','f1'],
+                  inplace=True)
+
+    return wcdf
