@@ -1,212 +1,159 @@
-# ![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png) Project 3: Web Scraping & Classification
+# Project 3
 
-### Description
+General Assembly DSI Project 3: Classification Modeling
 
-This project helps you practice webscraping, NLP, and classification models.
+## Problem Statement
 
-### Scenario
+I am to create a classification model to predict engagement on Reddit.
 
-You're fresh out of your Data Science bootcamp and looking to break through in the world of freelance data journalism. Nate Silver and co. at FiveThirtyEight have agreed to hear your pitch for a story in two weeks!
+Engagement is split into high and low engagement, determined by number of
+comments above and below median number of comments.
 
-Your piece is going to be on how to create a Reddit post that will get the most engagement from Reddit users. Because this is FiveThirtyEight, you're going to have to get data and analyze it in order to make a compelling narrative.
+For this project, I am focusing on the /r/astrology subreddit, to try and
+predict engagement on the astrology forums. To the stars!
 
-#### Project Summary
+## Summary
 
-In this project, we will practice two major skills: collecting data by scraping a website and building a binary predictor.
+This project was performed in python, using jupyter notebook as primary
+processor.
 
-There are two components to starting a data science problem: the problem statement, and acquiring the data.
+In order to complete this project I performed the following:
 
-For this project, your problem statement will be: _What characteristics of a post on Reddit are most predictive of the overall interaction on a thread (as measured by number of comments)?_
+1. **Web Scraping:** I scraped the /r/astrology Reddit page for information
+   including:
+   - Title text
+   - Number of comments
+   - Date posted (or time elapsed since posted)
+   - Body text
 
-Your method for acquiring the data will be scraping threads from [Reddit](https://www.reddit.com/). You have two choices for data for this project:
-1. Scrape hot threads from the [Reddit homepage](https://www.reddit.com/)
-2. Scrape from a subreddit that you choose
+2. **Cleaning and EDA:** I compiled all data into a pandas dataframe and ensured
+   no missing entries and proper formatting of data.
 
-You'll acquire _AT LEAST FOUR_ pieces of information about each thread:
-1. The title of the thread
-2. The subreddit that the thread corresponds to
-3. The length of time it has been up on Reddit
-4. The number of comments on the thread
+3. **Modeling:** I ended up using Random Forest classifier and Multinomial
+   Naive Bayes classifier as the primary models. Random Forest performed best
+   so it was used for reporting results.
 
-Scrape at least 10,000 threads.
+4. **Reporting:** I analyzed and interpreted the model results and predictions
+   using various metrics and reports.
 
-Once you've got the data, you will build a classification model that, using the text and any other relevant features, predicts whether or not a given Reddit post will have above or below the _median_ number of comments.
+## 0. Packages Etc.
 
-**BONUS PROBLEMS**
-1. Scrape the full text of the posts.
-2. Write the actual article that you're pitching and turn it into a blog post that you host on your personal blog.
+In order to perform this task, I created a number of scripts to help with
+repetitive tasks (all located in `code` folder):
 
----
+- `parser.py`: exports a class which handles parsing of the reddit html
+documents, using BeautifulSoup python package as underlying parser
+- `scraper.py`: exports a class which handles scraping of reddit and exporting
+to a text file, using Selenium as the back-end. This script also runs the main
+page scrape if run from the command line.
+- `pmawscraper.py`: *NOT USED* - I wrote this to try the Pushshift api, but the
+majority of results led to deleted posts, so I ended up scrapping the idea
+- `multiscraper.py`: a script which uses `scraper.py` to scrape Reddit search
+pages - it handled search queries and writing html source to disk
+- `searchpostscraper.py`: a script which was used on the output of
+`multiscraper.py` to get content of posts found (because search results do not
+show body text)
+- `ipynb_utils.py`: a set of definitions and functions that automated
+repetitive tasks needed in completing the jupyter notebooks
 
-### Requirements
+NTLK package was used for stopwords and attempts at stemming. The rest of the
+packages used are standard data science packages (pandas, scikit-learn, etc.)
 
-- **Create and compare two or more models**. One of these must be a random forest, however the other can be a classifier of your choosing: logistic regression, KNN, SVM, etc.
-- Jupyter Notebook(s) with your analysis for a peer audience of data scientists
-- An executive summary of your results
-- A 8 to 10 minute presentation outlining your process and findings for a semi-technical audience. The reason we say 'semi-technical' is that FiveThirtyEight wants to see how you plan to explain your findings in your article, and their audience is likely readers who are familiar with and interested in data/statistics, but are not experts. This means that if you'd like to talk about your model works you can, but explain what exactly your model does at a high level.
+## 1. Web Scraping
 
- **Pro Tip:** You can find a good example executive summary [here](https://www.proposify.biz/blog/executive-summary).
+I limited myself early on to manually scraping the html from the [Reddit web
+site](https://www.reddit.com). A lot of code was written for this task
+before realizing that there were post-count limits (scrolling down a Reddit page
+cannot be performed indefinitely - it is limited to about 1000 posts). 
+Therefore, I found workarounds rather than moving to an API.
 
- **Pro Tip 2:** When building your webscraper, use the `sleep` function to make time in between your individual requests.  Check reddit's API documentation to see how many calls they allow.  
+My one API exploration ended in disaster when, while using the Pushshift API
+(pmaw), I discovered that a majority of the posts it was giving me were deleted
+on Reddit. I therefore abandoned it.
 
- **Pro Tip 3:** Build your scraper, and rigorously test it on a few pages to make sure it works before setting it loose on all of Reddit.
+I have not tried the official Reddit API (or the praw wrapper).
 
- **Pro tip 4:** Scrape early, scrape often. Unlike earlier projects, you're collecting your own data!
+I discovered that using search terms under a subreddit would give posts that
+would otherwise not be discoverable by plain browsing, so as a workaround to
+the scroll limit, I used search terms that were arbitrarily chosen and chosen
+via exploration into the most common words used in Reddit posts and titles
+(taken from /r/astrology main page scrapes). A combination of regular main page
+scraping and search term scraping eventually got me over 10,000 posts.
 
-**Pro tip 5:** Save your results to a .csv or .txt file whenever you scrape. If you just keep your results in memory, if you computer crashes or shuts off, or you accidentally close your Jupyter notebook, you'll lose your data.
+## 1a. Parsing
 
----
+I used BeautifulSoup to parse all scraped content. See various `tags.json`
+files in `code` directory for tags used to extract content. See also
+`parser.py` script for main parsing script.
 
-### Necessary Deliverables / Submission
+## 2. Cleaning and EDA
 
-- Code and executive summary must be in a clearly commented Jupyter Notebook
-- You must submit your slide deck
-- Materials must be submitted by 9 a.m. Wednesday, September 7th
+Minimal cleaning was necessary, as parsing stage had ensured proper values and
+no missing values.
 
----
+Minimal EDA necessary. I generated a few features (word- and character-count
+related), predicting they might come in handy.
 
-### Dataset
+## 3. Modeling
 
-1. We'll be utilizing a dataset derived from live web data: [Reddit.com](https://www.reddit.com/)
-2. You will scrape the data yourself using Python
+Modeling involved some exploration. After reviewing a number of models
+I determined that Random Forest classification model was most accurate, with
+Multinomial Naive Bayes classifier next in line. Most modeling was focused on
+the Random Forest model, with Naive Bayes acting as backup to check that scores
+were consistent.
 
----
+Scikit-Learn's CountVectorizer was used along with NLTK's stopwords list to
+vectorize the text tokens in body and title. These were stored and used
+throughout the modeling process.
 
+I started by modeling the vectorized title text and the vectorized body text
+against the binary target of "comment count greater than median comment count".
+Both models scored higher than baseline, but provided good insight into
+predictor words.
 
-### Additional Resources
-- [Advice on How to Write for a Non-Technical Audience](http://programmers.stackexchange.com/questions/11523/explaining-technical-things-to-non-technical-people)
-- [Documentation for BeautifulSoup can be found here](http://www.crummy.com/software/BeautifulSoup/).
+I then attempted modeling with more features, settling finally on the following
+features:
+- title text vectorized
+- body text vectorized
+- title word and character counts
+- body word and character counts
+- month of post
+- year of post
 
----
+This resulted in the highest accuracy model, at 72% accuracy. However, the
+predictive results it gave back were mostly nonsense, with the body predictors
+being mainly numbers (such as "00").
 
-### Project Feedback + Evaluation
+Exploration of other features' relationships to target showed little predictive
+value as separate predictors. Though there were some curiosities:
+- Thursdays are apparently a big day for comments, with a huge spike in
+comments on Thursdays
+- September is apparently a big month for comments, with a huge spike in
+comments in September
 
-Data science is a field in which we apply data to solve real-world problems. Therefore, projects and presentations are means by which we can assess your ability to solve real-world problems in a data-driven manner.
+I have not explored why these spikes appear. Due to the method of obtaining the
+data, I am skeptical about the date distributions (I was not able to obtain
+data chronologically over a long period of time, so I do not know the actual
+distribution of Reddit posts over time).
 
-## Rubric
-Your instructor will evaluate your project (for the most part) using the following criteria.  You should make sure that you consider and/or follow most if not all of the considerations/recommendations outlined below **while** working through your project.
+## 4. Reporting
 
-For Project 3 the evaluation categories are as follows:<br>
-**The Data Science Process**
-- Problem Statement
-- Data Collection
-- Data Cleaning & EDA
-- Preprocessing & Modeling
-- Evaluation and Conceptual Understanding
-- Conclusion and Recommendations
+In short, after doing the above modeling, I concluded that the simpler model
+was the most effective at providing guidelines, despite the lesser predictive
+accuracy.
 
-**Organization and Professionalism**
-- Organization
-- Visualizations
-- Python Syntax and Control Flow
-- Presentation
+The no-holds-barred many-features model had the highest accuracy (72%) but gave
+me very little to go on if I was to be using it to guide how I write my next
+engaging post on the /r/astrology subreddit. However, the less-accurate
+word-vector-only posts gave quite good information. Words and phrases such as
+the following came up as quite strong preditors:
+- "anyone else"
+- "question"
+- "think"
+- "sagittarius"
 
-**Scores will be out of 30 points based on the 10 categories in the rubric.** <br>
-*3 points per section*<br>
-
-| Score | Interpretation |
-| --- | --- |
-| **0** | *Project fails to meet the minimum requirements for this item.* |
-| **1** | *Project meets the minimum requirements for this item, but falls significantly short of portfolio-ready expectations.* |
-| **2** | *Project exceeds the minimum requirements for this item, but falls short of portfolio-ready expectations.* |
-| **3** | *Project meets or exceeds portfolio-ready expectations; demonstrates a thorough understanding of every outlined consideration.* |
-
-
-### The Data Science Process
-
-**Problem Statement**
-- Is it clear what the goal of the project is?
-- What type of model will be developed?
-- How will success be evaluated?
-- Is the scope of the project appropriate?
-- Is it clear who cares about this or why this is important to investigate?
-- Does the student consider the audience and the primary and secondary stakeholders?
-
-**Data Collection**
-- Was enough data gathered to generate a significant result (at least 10,000 posts)?
-- Was data collected that was useful and relevant to the project?
-- Was data collection and storage optimized through custom functions, pipelines, and/or automation?
-- Was thought given to the server receiving the requests such as considering number of requests per second?
-
-**Data Cleaning and EDA**
-- Are missing values imputed/handled appropriately?
-- Are distributions examined and described?
-- Are outliers identified and addressed?
-- Are appropriate summary statistics provided?
-- Are steps taken during data cleaning and EDA framed appropriately?
-- Does the student address whether or not they are likely to be able to answer their problem statement with the provided data given what they've discovered during EDA?
-
-**Preprocessing and Modeling**
-- Is text data successfully converted to a matrix representation?
-- Are methods such as stop words, stemming, and lemmatization explored?
-- Does the student properly split and/or sample the data for validation/training purposes?
-- Does the student test and evaluate a variety of models to identify a production algorithm (**AT MINIMUM:** two models)?
-- Does the student defend their choice of production model relevant to the data at hand and the problem?
-- Does the student explain how the model works and evaluate its performance successes/downfalls?
-
-**Evaluation and Conceptual Understanding**
-- Does the student accurately identify and explain the baseline score?
-- Does the student select and use metrics relevant to the problem objective?
-- Does the student interpret the results of their model for purposes of inference?
-- Is domain knowledge demonstrated when interpreting results?
-- Does the student provide appropriate interpretation with regards to descriptive and inferential statistics?
-
-**Conclusion and Recommendations**
-- Does the student provide appropriate context to connect individual steps back to the overall project?
-- Is it clear how the final recommendations were reached?
-- Are the conclusions/recommendations clearly stated?
-- Does the conclusion answer the original problem statement?
-- Does the student address how findings of this research can be applied for the benefit of stakeholders?
-- Are future steps to move the project forward identified?
-
-
-### Organization and Professionalism
-
-**Project Organization**
-- Are modules imported correctly (using appropriate aliases)?
-- Are data imported/saved using relative paths?
-- Does the README provide a good executive summary of the project?
-- Is markdown formatting used appropriately to structure notebooks?
-- Are there an appropriate amount of comments to support the code?
-- Are files & directories organized correctly?
-- Are there unnecessary files included?
-- Do files and directories have well-structured, appropriate, consistent names?
-
-**Visualizations**
-- Are sufficient visualizations provided?
-- Do plots accurately demonstrate valid relationships?
-- Are plots labeled properly?
-- Are plots interpreted appropriately?
-- Are plots formatted and scaled appropriately for inclusion in a notebook-based technical report?
-
-**Python Syntax and Control Flow**
-- Is care taken to write human readable code?
-- Is the code syntactically correct (no runtime errors)?
-- Does the code generate desired results (logically correct)?
-- Does the code follows general best practices and style guidelines?
-- Are Pandas functions used appropriately?
-- Are `sklearn` and `NLTK` methods used appropriately?
-
-**Presentation**
-- Is the problem statement clearly presented?
-- Does a strong narrative run through the presentation building toward a final conclusion?
-- Are the conclusions/recommendations clearly stated?
-- Is the level of technicality appropriate for the intended audience?
-- Is the student substantially over or under time?
-- Does the student appropriately pace their presentation?
-- Does the student deliver their message with clarity and volume?
-- Are appropriate visualizations generated for the intended audience?
-- Are visualizations necessary and useful for supporting conclusions/explaining findings?
-
-
------
-
-## Why did we choose this project for you?
-
-This project covers three of the biggest concepts we cover in the class: Classification Modeling, Natural Language Processing and Data Wrangling/Acquisition.
-
-**Part 1** of the project focuses on **Data wrangling/gathering/acquisition**. This is a very important skill as not all the data you will need will be in clean CSVs or a single table in SQL. There is a good chance that wherever you land you will have to gather some data from some unstructured/semi-structured sources; when possible, requesting information from an API, but often scraping it because they don't have an API (or it's terribly documented).
-
-**Part 2** of the project focuses on **Natural Language Processing** and converting standard text data (like Titles and Comments) into a format that allows us to analyze it and use it in modeling.
-
-**Part 3** of the project focuses on **Classification Modeling**. Given that project 2 was a regression focused problem, we needed to give you a classification focused problem to practice the various models, means of assessment and preprocessing associated with classification.
+In conclusion, I would use the simpler models to guide future posts on Reddit,
+seeing as calls to action ("question', "anyone else") and specific category
+references ("sagittarius") have shown to be stronger predictors in these models
+and are quite transparent and interpretable. So in the next post, I would start
+with "QUESTION: Is anyone else a sagittarius?"!
