@@ -86,7 +86,7 @@ def wc_metrics(cvdf, y_true, y_pred, opts=[]):
 
     wcdf = pd.DataFrame()
     wcdf['total'] = cvdf.sum()
-    wcdf['pct'] = wcdf['total'] / wcdf['total'].sum()
+    wcdf['pct'] = (wcdf['total'] / wcdf['total'].sum()) * 100
 
     wcdf['correct'] = cvdf[correct_preds_filt].sum()
     wcdf['incorrect'] = cvdf[~correct_preds_filt].sum()
