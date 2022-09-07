@@ -35,7 +35,7 @@ def score_report(model, train_tuple, test_tuple):
 
     return string
 
-def metrics_report(model, y, X, labels=['high','low']):
+def metrics_report(model, y, X, labels=['low','high']):
     """
     Custom metrics report
     """
