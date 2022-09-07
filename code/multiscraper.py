@@ -13,7 +13,11 @@ from timer import Timer
 import time
 
 # Get useful words
-with open('../data/misc/useful_words_20220831145800.csv', 'r', newline='') as f:
+words_1 = '../data/misc/useful_words_20220831145800.csv'
+words_2 = '../data/misc/useless_words_20220906152100.csv'
+
+# as of 2022-09-06 I've run words_1
+with open(words_2, 'r', newline='') as f:
     reader = csv.reader(f)
     words = [row[0] for row in reader if row[0] != '']
 
@@ -33,8 +37,8 @@ SEARCH_ATTRS = {
     ]
 }
 
-WORD_START = 84
-N_WORDS = 15
+WORD_START = 0
+N_WORDS = len(words)
 
 def make_query(key, value):
     ''' Make query key-value pair '''
@@ -77,6 +81,7 @@ def scrape(url, attr_prefix):
 
 # run a scrape on a search for each work using various sort methods
 # hack the loop - too lazy to figure out a cool way to do it
+print("SRAPING")
 for word in words[WORD_START:WORD_START + N_WORDS]:
     q = make_query('q', word)
 

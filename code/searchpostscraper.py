@@ -21,6 +21,9 @@ urls = set()
 timer = Timer()
 timer.start()
 for file in scrape_files:
+    # on second pass just get scrape files from Sep 6
+    if "20220906" not in file: continue
+
     path = SCRAPE_DIR + file
     with open(path, 'r') as f:
         print(f'opening file: {file[:40]:<40}', end='')
@@ -47,6 +50,6 @@ with RedditReader() as rr:
         rr.set_url(full_url)
         rr.get()
         rr.write_page_source(prefix='scrape_page', dir='../scrapes/page/')
-        rr.sleep(3)
+        rr.sleep(1)
 
     print(f"* COMPLETED. Elapsed Time: {timer.elapsed()}")
