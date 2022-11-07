@@ -2,6 +2,9 @@
 
 General Assembly DSI Project 3: Classification Modeling
 
+*This is a data science project done for the General Assembly Data Science
+Immersive cohort starting July 25, 2022*
+
 ## Problem Statement
 
 I am to create a classification model to predict engagement on Reddit.
@@ -64,7 +67,7 @@ packages used are standard data science packages (pandas, scikit-learn, etc.)
 I limited myself early on to manually scraping the html from the [Reddit web
 site](https://www.reddit.com). A lot of code was written for this task
 before realizing that there were post-count limits (scrolling down a Reddit page
-cannot be performed indefinitely - it is limited to about 1000 posts). 
+cannot be performed indefinitely - it is limited to about 1000 posts).
 Therefore, I found workarounds rather than moving to an API.
 
 My one API exploration ended in disaster when, while using the Pushshift API
